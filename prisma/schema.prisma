@@ -1,0 +1,174 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ExchangeStatus {
+  DRAFT
+  FINALIZED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?
+  authVersion   Int       @default(0)
+  lastActiveAt  DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts                Account[]
+  sessions                Session[]
+  exchanges               ExchangeEvent[]
+  emailVerificationTokens EmailVerificationToken[]
+  passwordResetTokens     PasswordResetToken[]
+
+  @@index([lastActiveAt])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model ExchangeEvent {
+  id             String         @id @default(cuid())
+  name           String
+  description    String?
+  exchangeDate   DateTime?
+  budgetCents    Int?
+  isSecret       Boolean        @default(true)
+  status         ExchangeStatus @default(DRAFT)
+  shareCode      String         @unique
+  ownerId        String?
+  guestOwnerHash String?        @unique
+  finalizedAt    DateTime?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  owner        User?         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  participants Participant[]
+  exclusions   Exclusion[]
+  assignments  Assignment[]
+
+  @@index([ownerId, createdAt])
+}
+
+model Participant {
+  id              String    @id @default(cuid())
+  eventId         String
+  name            String
+  normalizedName  String
+  email           String?
+  normalizedEmail String?
+  accessTokenHash String?   @unique
+  claimedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  event                 ExchangeEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  exclusionsAsGiver     Exclusion[]   @relation("ExclusionGiver")
+  exclusionsAsRecipient Exclusion[]   @relation("ExclusionRecipient")
+  assignmentAsGiver     Assignment?   @relation("AssignmentGiver")
+  assignmentAsRecipient Assignment?   @relation("AssignmentRecipient")
+
+  @@unique([eventId, normalizedEmail])
+  @@unique([eventId, normalizedName])
+}
+
+model Exclusion {
+  eventId     String
+  giverId     String
+  recipientId String
+  createdAt   DateTime @default(now())
+
+  event     ExchangeEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  giver     Participant   @relation("ExclusionGiver", fields: [giverId], references: [id], onDelete: Cascade)
+  recipient Participant   @relation("ExclusionRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@id([giverId, recipientId])
+  @@index([eventId])
+  @@index([recipientId])
+}
+
+model Assignment {
+  id          String   @id @default(cuid())
+  eventId     String
+  giverId     String   @unique
+  recipientId String   @unique
+  createdAt   DateTime @default(now())
+
+  event     ExchangeEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  giver     Participant   @relation("AssignmentGiver", fields: [giverId], references: [id], onDelete: Cascade)
+  recipient Participant   @relation("AssignmentRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+}

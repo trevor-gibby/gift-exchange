@@ -1,0 +1,2 @@
+ALTER TABLE "ExchangeEvent"
+ADD COLUMN "isSecret" BOOLEAN NOT NULL DEFAULT true;
