@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState, useRef } from "react";
-import { Ban } from "lucide-react";
 import { saveExclusionsAction } from "@/actions/exchanges";
+import { ExclusionPopover } from "@/components/exclusion-popover";
 
 type Recipient = {
   id: string;
@@ -34,11 +34,7 @@ export function ExclusionEditor({
   }
 
   return (
-    <details className="exclusion-popover">
-      <summary className="icon-button" aria-label={`Edit exclusions for ${giverName}`}>
-        <Ban size={17} />
-      </summary>
-      <div className="exclusion-menu">
+    <ExclusionPopover label={`Edit exclusions for ${giverName}`} title={`Exclusions for ${giverName}`}>
         <p><strong>{giverName}</strong> cannot draw:</p>
         <form ref={formRef} action={action} onChange={autosave}>
           <input type="hidden" name="eventId" value={eventId} />
@@ -62,7 +58,6 @@ export function ExclusionEditor({
             </p>
           ) : null}
         </form>
-      </div>
-    </details>
+    </ExclusionPopover>
   );
 }

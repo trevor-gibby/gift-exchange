@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useSyncExternalStore, type FormEvent } from "react";
-import { ArrowRight, Ban, CalendarDays, ChevronLeft, CircleDollarSign, Gift, Plus, Shuffle, Sparkles, Trash2, UsersRound } from "lucide-react";
+import { ArrowRight, CalendarDays, ChevronLeft, CircleDollarSign, Gift, Plus, Shuffle, Sparkles, Trash2, UsersRound } from "lucide-react";
 import { ZodError } from "zod";
 import { MessageBanner } from "@/components/message-banner";
+import { ExclusionPopover } from "@/components/exclusion-popover";
+import { AutosaveParticipantName } from "@/components/autosave-participant-name";
 import { formatBudget, formatBudgetInput, formatDate } from "@/lib/format";
 import { initials } from "@/lib/identity";
 import {
@@ -162,10 +164,14 @@ export function LocalEvent({ eventId }: { eventId: string }) {
           <div className={`avatar avatar-${index % 4 + 1}`}>{initials(person.name)}</div>
           <div className="participant-details"><strong>{person.name}</strong><span>{person.excludedRecipientIds.length} exclusion{person.excludedRecipientIds.length === 1 ? "" : "s"}</span></div>
           {isDraft ? <div className="participant-actions">
-            <details className="exclusion-popover"><summary className="icon-button" aria-label={`Edit ${person.name}`}><Ban size={17} /></summary><div className="exclusion-menu">
-              <form className="form-stack" onSubmit={(submit) => { submit.preventDefault(); const name = String(new FormData(submit.currentTarget).get("name") ?? ""); update((event) => saveLocalParticipant(event, name, person.id), "Name updated."); }}><label className="field"><span>Participant name</span><input name="name" defaultValue={person.name} required minLength={2} maxLength={80} /></label><button type="submit" className="button button-small button-secondary">Save name</button></form>
-              <p><strong>{person.name}</strong> cannot draw:</p><div className="checkbox-list">{event.participants.filter(({ id }) => id !== person.id).map((recipient) => <label key={recipient.id}><input type="checkbox" checked={person.excludedRecipientIds.includes(recipient.id)} onChange={(change) => update((event) => setLocalExclusion(event, person.id, recipient.id, change.target.checked), "Exclusions saved.")} /><span>{recipient.name}</span></label>)}</div>
-            </div></details>
+            <ExclusionPopover label={`Edit ${person.name}`} title={`Edit ${person.name}`}>
+              <MessageBanner error={storageError ?? error} />
+              <AutosaveParticipantName name={person.name} onSave={(name) => update((event) => saveLocalParticipant(event, name, person.id), "Name updated.")} />
+              <p><strong>{person.name}</strong> cannot draw:</p><div className="checkbox-list">{event.participants.filter(({ id }) => id !== person.id).map((recipient) => <label key={recipient.id}><input type="checkbox" checked={person.excludedRecipientIds.includes(recipient.id)} onChange={(change) => {
+                const blocked = change.target.checked;
+                update((event) => setLocalExclusion(event, person.id, recipient.id, blocked), "Exclusions saved.");
+              }} /><span>{recipient.name}</span></label>)}</div>
+            </ExclusionPopover>
             <button className="icon-button icon-danger" type="button" aria-label={`Remove ${person.name}`} onClick={() => { if (window.confirm(`Remove ${person.name}?`)) update((event) => removeLocalParticipant(event, person.id), "Participant removed."); }}><Trash2 size={17} /></button>
           </div> : null}
         </article>)}</div>

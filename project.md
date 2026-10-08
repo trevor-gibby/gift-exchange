@@ -9,6 +9,7 @@ This is a gift exchange web application built with **Next.js 16** (App Router). 
 - Perform randomized matching with a perfect matching algorithm
 - For public draws, publish the complete giver-to-recipient assignment list through the event link without requiring participants to identify themselves
 - Responsive design
+- Participant editors have Close and Done controls, outside-tap dismissal, and Escape-key support. In browser-only mode, participant names autosave after a short pause and when leaving the field; invalid or duplicate names leave the saved name intact.
 - Fun holiday-themed UI with lots of animations and effects
 - Ability for users to create an account and log in to manage their events or just create a single event and save it in a session cookie
 - Oauth login with Google for account creation as well as email/password login

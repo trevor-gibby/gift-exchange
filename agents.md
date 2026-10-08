@@ -72,6 +72,7 @@ The local mode is an explicit exception to the server-only matching rule: its pu
 - Responsive behavior is required across mobile, tablet, and desktop.
 - Motion must support the experience and respect `prefers-reduced-motion`.
 - Core flows must remain keyboard accessible, legible, and usable without animation.
+- Participant editors must offer explicit dismissal, outside-tap dismissal, and Escape support. Browser-only participant names autosave after a short pause and on blur, preserving the saved name when validation fails.
 - Show useful empty, loading, validation, success, impossible-match, and error states.
 
 ## Engineering Expectations
