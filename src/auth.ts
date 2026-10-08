@@ -1,3 +1,4 @@
+import { requireDatabaseFeatures } from "@/lib/features";
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
@@ -49,7 +50,6 @@ if (process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET) {
 }
 
 export const authConfig = {
-  adapter: PrismaAdapter(getPrisma()),
   providers,
   session: { strategy: "jwt" },
   cookies: {
@@ -107,4 +107,7 @@ export const authConfig = {
   },
 } satisfies NextAuthConfig;
 
-export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);
+export const { handlers, auth, signIn, signOut } = NextAuth(() => {
+  requireDatabaseFeatures();
+  return { ...authConfig, adapter: PrismaAdapter(getPrisma()) };
+});

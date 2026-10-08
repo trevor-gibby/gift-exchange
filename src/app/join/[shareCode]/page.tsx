@@ -1,3 +1,4 @@
+import { isLocalMode } from "@/lib/features";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight, CalendarDays, CircleDollarSign, Eye, Gift, LockKeyhole, Mail, PartyPopper, Sparkles, UserRound, UsersRound } from "lucide-react";
@@ -12,6 +13,7 @@ import { hashToken } from "@/lib/security";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ shareCode: string }> }): Promise<Metadata> {
+  if (isLocalMode()) return { title: "Invitations unavailable" };
   const { shareCode } = await params;
   const event = await getPrisma().exchangeEvent.findUnique({ where: { shareCode }, select: { name: true } });
   return { title: event ? `Join ${event.name}` : "Join an exchange" };
@@ -25,6 +27,7 @@ export default async function JoinExchangePage({
   searchParams: Promise<{ error?: string; notice?: string }>;
 }) {
   const { shareCode } = await params;
+  if (isLocalMode()) notFound();
   const prisma = getPrisma();
   const [event, participantToken, query] = await Promise.all([
     prisma.exchangeEvent.findUnique({

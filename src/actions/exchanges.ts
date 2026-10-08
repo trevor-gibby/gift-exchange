@@ -1,5 +1,7 @@
 "use server";
 
+import { requireDatabaseFeatures } from "@/lib/features";
+
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -26,6 +28,7 @@ async function requireDraftEvent(eventId: string) {
 }
 
 export async function createExchangeAction(formData: FormData) {
+  requireDatabaseFeatures();
   const parsed = exchangeSchema.safeParse({
     name: formData.get("name"),
     description: formData.get("description"),
@@ -67,6 +70,7 @@ export async function createExchangeAction(formData: FormData) {
 }
 
 export async function updateExchangeAction(formData: FormData) {
+  requireDatabaseFeatures();
   const eventId = String(formData.get("eventId") ?? "");
   await requireDraftEvent(eventId);
 
@@ -96,6 +100,7 @@ export async function updateExchangeAction(formData: FormData) {
 }
 
 export async function deleteExchangeAction(formData: FormData) {
+  requireDatabaseFeatures();
   const eventId = String(formData.get("eventId") ?? "");
   const event = await getOwnedEvent(eventId);
   if (!event) redirect("/dashboard?error=Event%20not%20found");
@@ -106,6 +111,7 @@ export async function deleteExchangeAction(formData: FormData) {
 }
 
 export async function addParticipantAction(formData: FormData) {
+  requireDatabaseFeatures();
   const eventId = String(formData.get("eventId") ?? "");
   const event = await requireDraftEvent(eventId);
 
@@ -140,6 +146,7 @@ export async function addParticipantAction(formData: FormData) {
 }
 
 export async function removeParticipantAction(formData: FormData) {
+  requireDatabaseFeatures();
   const eventId = String(formData.get("eventId") ?? "");
   const participantId = String(formData.get("participantId") ?? "");
   await requireDraftEvent(eventId);
@@ -149,6 +156,7 @@ export async function removeParticipantAction(formData: FormData) {
 }
 
 export async function saveExclusionsAction(formData: FormData) {
+  requireDatabaseFeatures();
   const eventId = String(formData.get("eventId") ?? "");
   const giverId = String(formData.get("giverId") ?? "");
   const event = await requireDraftEvent(eventId);
@@ -174,6 +182,7 @@ export async function saveExclusionsAction(formData: FormData) {
 }
 
 export async function finalizeExchangeAction(formData: FormData) {
+  requireDatabaseFeatures();
   const eventId = String(formData.get("eventId") ?? "");
   const ownedEvent = await requireDraftEvent(eventId);
 
@@ -241,6 +250,7 @@ export async function finalizeExchangeAction(formData: FormData) {
 }
 
 export async function joinExchangeAction(formData: FormData) {
+  requireDatabaseFeatures();
   const shareCode = String(formData.get("shareCode") ?? "");
   const joinPath = `/join/${shareCode}`;
   const parsed = participantSchema.safeParse({

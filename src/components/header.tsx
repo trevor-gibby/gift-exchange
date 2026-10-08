@@ -1,10 +1,12 @@
+import { isLocalMode } from "@/lib/features";
 import Link from "next/link";
 import { Gift, LogOut, Settings, Sparkles } from "lucide-react";
 import { auth } from "@/auth";
 import { signOutAction } from "@/actions/auth";
 
 export async function Header() {
-  const session = await auth();
+  const localMode = isLocalMode();
+  const session = localMode ? null : await auth();
 
   return (
     <header className="site-header">
@@ -18,7 +20,12 @@ export async function Header() {
         </Link>
 
         <nav className="main-nav" aria-label="Main navigation">
-          {session?.user ? (
+          {localMode ? (
+            <>
+              <Link className="nav-link" href="/dashboard">My exchanges</Link>
+              <Link className="button button-small button-primary" href="/exchanges/new">New exchange</Link>
+            </>
+          ) : session?.user ? (
             <>
               <Link className="nav-link" href="/dashboard">
                 My exchanges

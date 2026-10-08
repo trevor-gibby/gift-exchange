@@ -1,3 +1,5 @@
+import { isLocalMode } from "@/lib/features";
+import { LocalNewExchange } from "@/components/local-exchanges";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CalendarDays, ChevronLeft, DollarSign, Eye, Gift, PartyPopper, Sparkles } from "lucide-react";
@@ -12,6 +14,7 @@ export const metadata: Metadata = { title: "New exchange" };
 export const dynamic = "force-dynamic";
 
 export default async function NewExchangePage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  if (isLocalMode()) return <LocalNewExchange />;
   const session = await auth();
 
   if (!session) {

@@ -33,6 +33,26 @@ A modern, responsive gift exchange app built with Next.js 16, Auth.js/NextAuth, 
 
 ## Local setup
 
+### Browser-only deployment (no database or login)
+
+Set just one environment variable:
+
+```text
+GIFT_EXCHANGE_MODE=local
+```
+
+Then run `npm install` and `npm run dev`, or `npm run build` followed by `npm start`. No PostgreSQL instance, `DATABASE_URL`, authentication secret, Google credentials, or email service is required. Prisma Client generation during installation also works without a database URL.
+
+In this mode, exchanges are saved in versioned local storage in the current browser. You can create exchanges, edit names and event details, configure directional exclusions, and finalize a complete randomized draw. All matches are visible to the organizer on that device. Finalized participants and exclusions stay locked. Names are the only participant information collected.
+
+There are no shared invitations, secret draws, cross-device access, or account features. Clearing browser/site data deletes the local exchanges. Local saves are not encrypted and are accessible to anyone using the same browser profile. Storage failures show an error without silently discarding existing saves.
+
+To deploy on Vercel Hobby, import `trevor-gibby/gift-exchange` as a Next.js project, use the repository root and the default install/build commands, and set `GIFT_EXCHANGE_MODE=local` for Production, Preview, and Development before the first deployment. Git pushes to `main` then deploy production automatically.
+
+To restore the full app, provision PostgreSQL, configure the variables below, apply migrations with `npm run db:deploy`, set `GIFT_EXCHANGE_MODE=database` (or remove it), and redeploy. Browser-only exchanges are not automatically imported into PostgreSQL.
+
+### Full application with PostgreSQL
+
 Prerequisites: Node.js 22.12 or later and a running PostgreSQL instance.
 
 1. Copy `.env.example` to `.env` and update `DATABASE_URL` and `AUTH_SECRET`.

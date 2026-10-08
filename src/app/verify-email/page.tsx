@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { isLocalMode } from "@/lib/features";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
@@ -6,6 +8,7 @@ import { VerificationRequestForm } from "@/components/auth-forms";
 export const metadata: Metadata = { title: "Verify email" };
 
 export default function RequestEmailVerificationPage() {
+  if (isLocalMode()) redirect("/dashboard");
   return (
     <section className="narrow-page shell auth-standalone-page">
       <div className="form-card centered-card">

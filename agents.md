@@ -27,6 +27,12 @@ Build a modern, responsive, holiday-themed gift exchange web app with polished a
 
 ## Required Technology
 
+### Temporary browser-only deployment
+
+`GIFT_EXCHANGE_MODE=local` disables PostgreSQL and account functionality. See `project.md` for its scope. The default/unset mode is the complete database-backed app. Local exchanges use versioned browser storage, collect names only, show all matches on the organizer's device, and offer no secret draw or shared invitation. Preserve the full app for later re-enablement. Account routes, API handlers, and server actions must guard the mode before authentication or database access. Client generation and production builds must work without database/authentication configuration in local mode.
+
+The local mode is an explicit exception to the server-only matching rule: its public draw runs the shared pure constraint solver in the browser. Database-backed authorization, credentials, tokens, and Prisma remain server-only.
+
 - Next.js 16 with the App Router
 - TypeScript
 - PostgreSQL
@@ -89,5 +95,6 @@ Build a modern, responsive, holiday-themed gift exchange web app with polished a
 - [x] Add authenticated password changes.
 - [x] Require verification for new email/password accounts.
 - [x] Preserve and verify password-reset support for existing password accounts.
+- [x] Add an environment-controlled browser-only deployment with accounts and database access disabled.
 
 When this rebuild is fully implemented and verified, mark the roadmap item complete here and in `project.md`.

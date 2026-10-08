@@ -1,3 +1,4 @@
+import { isLocalMode } from "@/lib/features";
 import type { Metadata } from "next";
 import { BadgeCheck, KeyRound, ShieldAlert, UserRound } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -9,6 +10,7 @@ export const metadata: Metadata = { title: "Account settings" };
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
+  if (isLocalMode()) redirect("/dashboard");
   const session = await auth();
   if (!session?.user.id) redirect("/login");
 

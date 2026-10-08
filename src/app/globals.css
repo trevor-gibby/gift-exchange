@@ -1541,3 +1541,6 @@ summary:focus-visible {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+.local-participant-form { display: grid; gap: 16px; padding: 0 24px 24px; }
+.local-participant-form .button { justify-self: start; }

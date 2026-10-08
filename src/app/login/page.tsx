@@ -1,3 +1,4 @@
+import { isLocalMode } from "@/lib/features";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -19,6 +20,7 @@ export default async function LoginPage({
     error?: string;
   }>;
 }) {
+  if (isLocalMode()) redirect("/dashboard");
   if (await auth()) redirect("/dashboard");
   const query = await searchParams;
   const googleEnabled = Boolean(process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET);

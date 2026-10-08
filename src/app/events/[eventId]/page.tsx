@@ -1,3 +1,5 @@
+import { isLocalMode } from "@/lib/features";
+import { LocalEvent } from "@/components/local-exchanges";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -38,6 +40,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ eventId: string }> }): Promise<Metadata> {
   const { eventId } = await params;
+  if (isLocalMode()) return { title: "Your exchange" };
   const event = await getOwnedEvent(eventId);
   return { title: event?.name ?? "Exchange" };
 }
@@ -50,6 +53,7 @@ export default async function EventPage({
   searchParams: Promise<{ error?: string; notice?: string }>;
 }) {
   const { eventId } = await params;
+  if (isLocalMode()) return <LocalEvent eventId={eventId} />;
   const [event, query] = await Promise.all([getOwnedEvent(eventId), searchParams]);
   if (!event) notFound();
 

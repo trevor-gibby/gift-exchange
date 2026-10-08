@@ -1,5 +1,7 @@
 "use server";
 
+import { requireDatabaseFeatures } from "@/lib/features";
+
 import { AuthError } from "next-auth";
 import { compare, hash } from "bcryptjs";
 import { redirect } from "next/navigation";
@@ -25,6 +27,7 @@ export type FormState = {
 };
 
 export async function loginAction(_state: FormState, formData: FormData): Promise<FormState> {
+  requireDatabaseFeatures();
   const parsed = credentialsSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -60,6 +63,7 @@ export async function loginAction(_state: FormState, formData: FormData): Promis
 }
 
 export async function registerAction(_state: FormState, formData: FormData): Promise<FormState> {
+  requireDatabaseFeatures();
   const parsed = registrationSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -107,6 +111,7 @@ export async function requestEmailVerificationAction(
   _state: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  requireDatabaseFeatures();
   const email = normalizeEmail(String(formData.get("email") ?? ""));
   const parsed = credentialsSchema.shape.email.safeParse(email);
   const response: FormState = {
@@ -144,6 +149,7 @@ export async function verifyEmailAction(
   _state: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  requireDatabaseFeatures();
   const token = String(formData.get("token") ?? "");
   if (!token) return { error: "This verification link is invalid." };
 
@@ -185,6 +191,7 @@ export async function requestPasswordResetAction(
   _state: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  requireDatabaseFeatures();
   const email = normalizeEmail(String(formData.get("email") ?? ""));
   const parsed = credentialsSchema.shape.email.safeParse(email);
   const response: FormState = {
@@ -225,6 +232,7 @@ export async function resetPasswordAction(
   _state: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  requireDatabaseFeatures();
   const token = String(formData.get("token") ?? "");
   const password = String(formData.get("password") ?? "");
   const parsedPassword = passwordSchema.safeParse(password);
@@ -273,6 +281,7 @@ export async function changePasswordAction(
   _state: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  requireDatabaseFeatures();
   const session = await auth();
   if (!session?.user.id) redirect("/login");
 
@@ -320,6 +329,7 @@ export async function deleteAccountAction(
   _state: FormState,
   formData: FormData,
 ): Promise<FormState> {
+  requireDatabaseFeatures();
   const session = await auth();
   if (!session?.user.id) redirect("/login");
 
@@ -347,9 +357,11 @@ export async function deleteAccountAction(
 }
 
 export async function googleSignInAction() {
+  requireDatabaseFeatures();
   await signIn("google", { redirectTo: "/dashboard" });
 }
 
 export async function signOutAction() {
+  requireDatabaseFeatures();
   await signOut({ redirectTo: "/" });
 }

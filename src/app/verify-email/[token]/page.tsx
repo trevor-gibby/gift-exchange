@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { isLocalMode } from "@/lib/features";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BadgeCheck } from "lucide-react";
@@ -6,6 +8,7 @@ import { VerifyEmailForm } from "@/components/auth-forms";
 export const metadata: Metadata = { title: "Confirm email" };
 
 export default async function VerifyEmailPage({ params }: { params: Promise<{ token: string }> }) {
+  if (isLocalMode()) redirect("/dashboard");
   const { token } = await params;
 
   return (

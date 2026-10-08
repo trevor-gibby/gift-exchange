@@ -1,7 +1,10 @@
+import { isLocalMode } from "@/lib/features";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Gift } from "lucide-react";
 
 export default function JoinLandingPage() {
+  if (isLocalMode()) redirect("/dashboard");
   return (
     <section className="narrow-page shell">
       <div className="form-card centered-card">

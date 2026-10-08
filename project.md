@@ -30,5 +30,13 @@ This is a gift exchange web application built with **Next.js 16** (App Router). 
  [x] Add ability to change account password
  [x] Require email verification for new accounts
  [x] Add ability to reset password for existing accounts
+ [x] Add an environment-controlled browser-only mode for deployment without a database or login.
+
+## Deployment modes
+
+- `GIFT_EXCHANGE_MODE=database` (the default when unset) retains the complete PostgreSQL and Auth.js application described above.
+- `GIFT_EXCHANGE_MODE=local` enables a temporary browser-only deployment with no database or login setup. Exchanges, names, directional exclusions, and finalized assignments are stored in versioned local storage. Organizers can create multiple local exchanges and edit draft details/participants. Draws use the same randomized constraint solver and lock participants/exclusions after finalization.
+- Local mode shows the complete draw on the organizer's device. It does not offer secret draws, shared invitation links, participant claims, accounts, or cross-device access. No emails are collected. Clearing browser data removes local exchanges; local data is not automatically migrated when database mode returns.
+- Account pages redirect to local exchanges; authentication and maintenance endpoints and database-backed server actions are disabled server-side. Install and build must work with no database URL or authentication secret.
  
  

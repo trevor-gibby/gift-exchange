@@ -1,4 +1,5 @@
 import "server-only";
+import { requireDatabaseFeatures } from "@/lib/features";
 
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
@@ -20,6 +21,7 @@ function createPrismaClient() {
 }
 
 export function getPrisma() {
+  requireDatabaseFeatures();
   const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
   if (process.env.NODE_ENV !== "production") {

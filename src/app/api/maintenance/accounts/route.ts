@@ -1,3 +1,4 @@
+import { isLocalMode } from "@/lib/features";
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { deleteInactiveAccounts } from "@/lib/account-maintenance";
@@ -11,6 +12,7 @@ function secretsMatch(received: string, expected: string) {
 }
 
 async function runAccountMaintenance(request: Request) {
+  if (isLocalMode()) return NextResponse.json({ error: "Account maintenance is disabled." }, { status: 404 });
   const cronSecret = process.env.CRON_SECRET;
   const authorization = request.headers.get("authorization");
 

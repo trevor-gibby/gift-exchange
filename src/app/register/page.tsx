@@ -1,3 +1,4 @@
+import { isLocalMode } from "@/lib/features";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -7,6 +8,7 @@ import { AuthIllustration, RegisterForm } from "@/components/auth-forms";
 export const metadata: Metadata = { title: "Create account" };
 
 export default async function RegisterPage() {
+  if (isLocalMode()) redirect("/dashboard");
   if (await auth()) redirect("/dashboard");
 
   return (

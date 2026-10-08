@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { isLocalMode } from "@/lib/features";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { KeyRound } from "lucide-react";
@@ -6,6 +8,7 @@ import { ForgotPasswordForm } from "@/components/auth-forms";
 export const metadata: Metadata = { title: "Reset password" };
 
 export default function ForgotPasswordPage() {
+  if (isLocalMode()) redirect("/dashboard");
   return (
     <section className="narrow-page shell">
       <div className="form-card centered-card">

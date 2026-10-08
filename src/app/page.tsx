@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { isLocalMode } from "@/lib/features";
 import { ArrowRight, Ban, Gift, Link2, ShieldCheck, Shuffle, Sparkles, UsersRound } from "lucide-react";
 
 export default function HomePage() {
+  const localMode = isLocalMode();
   return (
     <>
       <section className="hero shell">
@@ -9,7 +11,7 @@ export default function HomePage() {
           <span className="eyebrow"><Sparkles size={14} /> A little magic, perfectly matched</span>
           <h1>Make the season <em>surprising.</em></h1>
           <p className="hero-lede">
-            Gather your people, set the ground rules, and make a fair draw—then keep the matches private or share them with the group.
+            {localMode ? "Gather your people, set the ground rules, and make a fair draw. Save your exchange and see all the matches in this browser." : "Gather your people, set the ground rules, and make a fair draw—then keep the matches private or share them with the group."}
           </p>
           <div className="hero-actions">
             <Link className="button button-primary button-large" href="/exchanges/new">
@@ -19,7 +21,7 @@ export default function HomePage() {
               View my exchanges
             </Link>
           </div>
-          <p className="hero-note"><ShieldCheck size={16} /> No account needed for your first exchange</p>
+          <p className="hero-note"><ShieldCheck size={16} /> {localMode ? "No account needed · Saved on this device" : "No account needed for your first exchange"}</p>
         </div>
 
         <div className="hero-art" aria-label="An animated gift exchange illustration">
@@ -49,13 +51,13 @@ export default function HomePage() {
           <div className="section-heading">
             <span className="eyebrow">Everything you need</span>
             <h2>Gift exchanges, minus the spreadsheet</h2>
-            <p>A thoughtful flow from the first invite to private or public results.</p>
+            <p>{localMode ? "Your guest list, your rules, one joyful draw." : "A thoughtful flow from the first invite to private or public results."}</p>
           </div>
           <div className="feature-grid">
             <article className="feature-card feature-berry">
               <span className="feature-icon"><UsersRound /></span>
               <h3>Gather your crew</h3>
-              <p>Add everyone yourself or share one private event link so guests can save their own spot.</p>
+              <p>{localMode ? "Add everyone by name and keep your guest list together on this device." : "Add everyone yourself or share one private event link so guests can save their own spot."}</p>
             </article>
             <article className="feature-card feature-pine">
               <span className="feature-icon"><Ban /></span>
@@ -69,8 +71,8 @@ export default function HomePage() {
             </article>
             <article className="feature-card feature-ink">
               <span className="feature-icon"><Link2 /></span>
-              <h3>Reveal your way</h3>
-              <p>Keep each match private, or publish the complete assignment list through one magic link.</p>
+              <h3>{localMode ? "Enjoy the reveal" : "Reveal your way"}</h3>
+              <p>{localMode ? "See every giver and recipient together after the draw. Results stay in this browser." : "Keep each match private, or publish the complete assignment list through one magic link."}</p>
             </article>
           </div>
         </div>
@@ -83,8 +85,8 @@ export default function HomePage() {
         </div>
         <ol className="steps-list">
           <li><span>01</span><div><h3>Create</h3><p>Name the occasion, add a date and an optional budget.</p></div></li>
-          <li><span>02</span><div><h3>Invite</h3><p>Build the guest list or let friends join from your event link.</p></div></li>
-          <li><span>03</span><div><h3>Draw</h3><p>Set exclusions, finalize once, and reveal the results privately or publicly.</p></div></li>
+          <li><span>02</span><div><h3>{localMode ? "Gather" : "Invite"}</h3><p>{localMode ? "Build your guest list with everyone who is exchanging." : "Build the guest list or let friends join from your event link."}</p></div></li>
+          <li><span>03</span><div><h3>Draw</h3><p>{localMode ? "Set exclusions, finalize once, and reveal all the matches." : "Set exclusions, finalize once, and reveal the results privately or publicly."}</p></div></li>
         </ol>
       </section>
 

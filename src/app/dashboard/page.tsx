@@ -1,3 +1,5 @@
+import { isLocalMode } from "@/lib/features";
+import { LocalDashboard } from "@/components/local-exchanges";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CalendarDays, Gift, Plus, Sparkles, UsersRound } from "lucide-react";
@@ -12,6 +14,7 @@ export const metadata: Metadata = { title: "My exchanges" };
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ error?: string; notice?: string }> }) {
+  if (isLocalMode()) return <LocalDashboard />;
   const session = await auth();
   const prisma = getPrisma();
 
